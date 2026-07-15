@@ -1,0 +1,266 @@
+/* macOS popover styling — sits on top of the window's native vibrancy ('menu'),
+   so backgrounds stay translucent and colors adapt to the system theme. */
+
+:root {
+  color-scheme: light dark;
+  --text-primary: light-dark(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.85));
+  --text-secondary: light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.55));
+  --text-error: light-dark(#c93400, #ff9f0a);
+  --separator: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.1));
+  --control-bg: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.08));
+  --control-active-bg: light-dark(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.22));
+  --control-hover-bg: light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.12));
+  --accent: light-dark(#007aff, #0a84ff);
+}
+
+.popover {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 10px 12px 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.popover-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.header-spacer {
+  width: 24px;
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.icon-button:hover {
+  background: var(--control-hover-bg);
+  color: var(--text-primary);
+}
+
+.icon-button:disabled {
+  opacity: 0.4;
+}
+
+/* Segmented control */
+.segmented-control {
+  display: flex;
+  padding: 2px;
+  border-radius: 7px;
+  background: var(--control-bg);
+  margin-bottom: 12px;
+}
+
+.segment {
+  flex: 1;
+  padding: 3px 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: default;
+}
+
+.segment-active {
+  background: var(--control-active-bg);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Totals */
+.total-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0 14px;
+}
+
+.total-amount {
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.total-caption {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Provider rows */
+.provider-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 2px;
+  border-top: 1px solid var(--separator);
+}
+
+.provider-name {
+  font-weight: 500;
+}
+
+.provider-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.provider-note {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.provider-note-error {
+  color: var(--text-error);
+}
+
+.loading-note {
+  padding: 8px 2px;
+  text-align: left;
+}
+
+/* Footer */
+.popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid var(--separator);
+}
+
+.footer-status {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.footer-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Settings */
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.key-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.key-row-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.key-row-name {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.key-badge {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--control-bg);
+  color: var(--text-secondary);
+}
+
+.key-row-controls {
+  display: flex;
+  gap: 5px;
+}
+
+.key-input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 7px;
+  border: 1px solid var(--separator);
+  border-radius: 6px;
+  background: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.2));
+  color: var(--text-primary);
+  font-size: 12px;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.key-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.key-button {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--control-bg);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: default;
+}
+
+.key-button:hover:not(:disabled) {
+  background: var(--control-hover-bg);
+}
+
+.key-button:disabled {
+  opacity: 0.4;
+}
+
+.key-button-clear {
+  color: var(--text-error);
+}

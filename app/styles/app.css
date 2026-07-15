@@ -1,0 +1,22 @@
+@import './globals.css';
+@import './popover.css';
+
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  font-size: 13px;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  line-height: 1.4;
+}
