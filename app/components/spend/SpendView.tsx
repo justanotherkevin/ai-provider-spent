@@ -3,6 +3,7 @@ import { Power, RefreshCw, Settings } from 'lucide-react'
 import { useConveyor } from '@/app/hooks/use-conveyor'
 import type { SpendSnapshot, ProviderSpend } from '@/lib/conveyor/schemas/spend-schema'
 import { PROVIDERS } from './providers'
+import { ClaudeUsageCard } from './ClaudeUsageCard'
 
 type Period = 'today' | '7d' | 'month'
 
@@ -103,12 +104,16 @@ export const SpendView = ({ onOpenSettings }: { onOpenSettings: () => void }) =>
         <span className="total-caption">{PERIODS.find((p) => p.id === period)?.label} · all providers</span>
       </div>
 
-      <div className="provider-list">
-        {snapshot ? (
-          snapshot.providers.map((p) => <ProviderRow key={p.provider} spend={p} period={period} />)
-        ) : (
-          <div className="provider-note loading-note">Loading…</div>
-        )}
+      <div className="popover-scroll">
+        <div className="provider-list">
+          {snapshot ? (
+            snapshot.providers.map((p) => <ProviderRow key={p.provider} spend={p} period={period} />)
+          ) : (
+            <div className="provider-note loading-note">Loading…</div>
+          )}
+        </div>
+
+        <ClaudeUsageCard />
       </div>
 
       <footer className="popover-footer">

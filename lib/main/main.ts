@@ -5,7 +5,9 @@ import { registerResourcesProtocol } from './protocols'
 import { registerWindowHandlers } from '@/lib/conveyor/handlers/window-handler'
 import { registerAppHandlers } from '@/lib/conveyor/handlers/app-handler'
 import { registerSpendHandlers } from '@/lib/conveyor/handlers/spend-handler'
+import { registerClaudeUsageHandlers } from '@/lib/conveyor/handlers/claude-usage-handler'
 import { startSpendScheduler, monthToDateTotal } from './spend'
+import { startClaudeUsageScheduler } from './claude-code-usage'
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.desktop-ai-spent')
@@ -20,11 +22,13 @@ app.whenReady().then(() => {
   registerWindowHandlers(popover)
   registerAppHandlers(app)
   registerSpendHandlers()
+  registerClaudeUsageHandlers()
 
   startSpendScheduler((snapshot) => {
     const total = monthToDateTotal(snapshot)
     setTrayTitle(total === null ? '' : ` $${total.toFixed(2)}`)
   })
+  startClaudeUsageScheduler()
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
