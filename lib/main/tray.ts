@@ -5,7 +5,7 @@ import trayIcon1x from '@/resources/trayTemplate.png?asset'
 import trayIcon2x from '@/resources/trayTemplate@2x.png?asset'
 
 const POPOVER_WIDTH = 320
-const POPOVER_HEIGHT = 420
+const POPOVER_HEIGHT = 480
 
 let tray: Tray | null = null
 let popover: BrowserWindow | null = null
