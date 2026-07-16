@@ -1,5 +1,5 @@
-appId: com.guasam.era
-productName: electron-react-app
+appId: com.kevinhu.ai-provider-spent
+productName: AI Provider Spend
 asar: true
 asarUnpack:
   - resources/**
@@ -13,7 +13,7 @@ files:
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 win:
-  executableName: electron-react-app
+  executableName: ai-provider-spent
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -21,14 +21,10 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: resources/build/entitlements.mac.plist
-  extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  category: public.app-category.utilities
   notarize: false
 dmg:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: ${name}-${version}-${arch}.${ext}
 linux:
   target:
     - AppImage
@@ -40,5 +36,6 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  owner: justanotherkevin
+  repo: ai-provider-spent

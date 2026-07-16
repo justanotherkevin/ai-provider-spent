@@ -1,417 +1,102 @@
-# Electron React App
+# AI Provider Spend
 
-A modern Electron application template with React, Vite, TypeScript, and TailwindCSS. This project provides a solid foundation for developing cross-platform desktop applications.
+[English](README.md) | [简体中文](README.cn.md)
 
-<br />
-
-![Electron](https://img.shields.io/badge/v40.1.0-Electron-blue) &nbsp;
-![React](https://img.shields.io/badge/v19.2.4-React-blue) &nbsp;
-![TypeScript](https://img.shields.io/badge/v5.9.3-TypeScript-blue) &nbsp;
-![Vite](https://img.shields.io/badge/v7.3.1-Vite-blue) &nbsp;
-![Shadcn](https://img.shields.io/badge/Shadcn-UI-blue) &nbsp;
-![Tailwind](https://img.shields.io/badge/v4.1.18-Tailwind-blue)
-
-<br />
+<p align="center"><em>A tiny macOS menu-bar app that keeps your AI spend and Claude Code plan usage one click away.</em></p>
 
 <p align="center">
-    <img src="app/assets/era-preview.png" target="_blank" />
+  <img src="docs/ai-provider-usage.gif" alt="AI Provider Spend demo" width="680">
 </p>
 
 <p align="center">
-    <a href="https://imgur.com/B5pGkDk">Watch Video Preview</a>
+  <img src="https://img.shields.io/badge/Electron-47848F?style=flat&logo=electron&logoColor=white" alt="Electron">
+  <img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT">
 </p>
 
-<br />
+## What Is This
 
-## Stack
+Are you like me — constantly alt-tabbing over to claude.ai just to check how much of your session you've burned through? I built this so I wouldn't have to.
 
-🔹 **[Electron](https://www.electronjs.org)** - Cross-platform desktop application framework.<br />
-🔹 **[React](https://react.dev)** - The library for web and native user interfaces.<br />
-🔹 **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript.<br />
-🔹 **[Shadcn UI](https://ui.shadcn.com)** - Beautiful and accessible component library.<br />
-🔹 **[TailwindCSS](https://tailwindcss.com)** - Utility-first CSS framework.<br />
-🔹 **[Electron Vite](https://electron-vite.org)** - Lightning-fast build tool based on **Vite** for fastest hot-reload.<br />
-🔹 **[Electron Builder](https://www.electron.build/index.html)** - Configured for packaging applications.<br />
+AI Provider Spend lives in your macOS menu bar and answers two questions you'd otherwise have to open three different dashboards for:
 
-<br />
+- **"How much of my Claude Code plan have I used?"** — one click away instead of a browser tab. Shows the exact same 5-hour session %, weekly %, per-model scoped limits (e.g. a specific model's weekly cap), and reset countdowns that claude.ai's own Settings → Usage page shows, sourced straight from Anthropic's usage endpoint using Claude Code's own local login — no extra setup required.
+- **"How much have I spent on AI APIs this month?"** — pulls official billing data from each provider's Admin API (Anthropic, OpenAI; Google Gemini support is pending Cloud Billing export).
 
-## In-Built Features
+Everything renders in a lightweight popover anchored to the tray icon. No dock icon, no full app window, no accounts to create — just the numbers, right where you already are.
 
-| Feature                     | Description                                                                    |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| **Conveyor**                | Type-safe inter-process communication with Zod validation                      |
-| **Custom Titlebar & Menus** | Style the window titlebar and menus as you want                                |
-| **Clean Project Structure** | Separation of main and renderer processes                                      |
-| **Resources Protocol**      | Access local file resources via `res://` protocol                              |
-| **Import Path Aliases**     | Keep your imports organized and clean                                          |
-| **Theme Switcher**          | Built-in theme switching for dark and light mode                               |
-| **Error Boundary**          | Built-in React error boundary with detailed error reporting                    |
-| **Welcome Kit**             | Interactive showcase with Framer Motion animations                             |
-| **Code Formatting**         | Prettier and ESLint pre-configured for code quality                            |
-| **Hot Reload**              | Lightning-fast development with Vite's HMR                                     |
-| **VS Code Debugging**       | Pre-configured launch configurations for debugging main and renderer processes |
+## Download
 
-<br />
+Grab the latest build from the [Releases page](https://github.com/justanotherkevin/ai-provider-spent/releases/latest) — pick the `.dmg` that matches your Mac:
 
-## Installation
+- **Apple Silicon** (M1/M2/M3/M4) — `ai-provider-spent-*-arm64.dmg`
+- **Intel** — `ai-provider-spent-*-x64.dmg`
 
-Clone the repository:
+> **Heads up:** these builds are unsigned. macOS will say the app "can't be opened because it is from an unidentified developer." Right-click (or Control-click) the app in your Applications folder → **Open** → confirm. You only need to do this once.
+
+## Support This Project
+
+Tired of that "unidentified developer" warning? Same. It's a $99/year Apple Developer account away from disappearing. If this app saves you from alt-tabbing to check your usage, [buy me a coffee](https://buymeacoffee.com/justanotherkevin) — once it hits $100, I'll get the Apple Developer account set up and ship signed, notarized builds so nobody has to see that warning again.
+
+<p align="center">
+  <a href="https://buymeacoffee.com/justanotherkevin"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee"></a>
+</p>
+
+## Features
+
+| Feature | Description |
+| --- | --- |
+| **Multi-provider spend** | Today / 7 Days / Month views across Anthropic, OpenAI, and (soon) Google Gemini |
+| **Claude Code plan usage** | Real session %, weekly %, per-model limits, and usage-credit spend — not an estimate |
+| **Menu bar tray title** | Shows your month-to-date total at a glance, no need to open the popover |
+| **Encrypted key storage** | Admin API keys are encrypted at rest via the macOS Keychain (Electron `safeStorage`) |
+| **Zero-config Claude Code usage** | If Claude Code is already logged in on your machine, usage tracking just works |
+
+## Run From Source
+
+Prefer to build it yourself instead of downloading a `.dmg`?
 
 ```bash
 # Clone the repository
-git clone https://github.com/guasam/electron-react-app
+git clone https://github.com/justanotherkevin/ai-provider-spent.git
+cd ai-provider-spent
 
-# Change directory
-cd electron-react-app
-
-# Install dependencies (use any package manager: npm, yarn, pnpm, bun)
+# Install dependencies
 npm install
-```
 
-<br />
-
-## Development
-
-Start the development server:
-
-```bash
+# Start the app in development mode
 npm run dev
 ```
 
-This will start Electron with hot-reload enabled so you can see changes in real time.
+The app appears as an icon in your menu bar — click it to open the popover.
 
-<br />
+### Configuration
 
-## Conveyor - Inter-Process Communication
+Open **Settings** (gear icon in the popover) to add your provider Admin API keys:
 
-**Conveyor** is a type-safe IPC system that enables secure communication between your React frontend and Electron's main process. It uses Zod schemas for runtime validation and provides full TypeScript support.
+| Provider | Where to get a key |
+| --- | --- |
+| Anthropic | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) — requires an organization Admin key, not a regular API key |
+| OpenAI | [platform.openai.com](https://platform.openai.com) — organization Admin key |
+| Google Gemini | Not yet supported — requires a Cloud Billing BigQuery export |
 
-🔹 **Type-safe** - Full TypeScript support with compile-time and runtime validation<br />
-🔹 **Secure** - Validates all data using Zod schemas<br />
-🔹 **Modular** - Clean API structure with organized handlers<br />
-🔹 **Simple** - Easy-to-use React hooks and global APIs<br />
-
-<br />
-
-### Quick Start
-
-Use the `useConveyor` hook in your React components:
-
-```tsx
-import { useConveyor } from '@/app/hooks/use-conveyor'
-
-function MyComponent() {
-  const { version } = useConveyor('app')
-  const { windowMinimize } = useConveyor('window')
-
-  const handleGetVersion = async () => {
-    console.log('App version:', await version())
-    console.log('App version:', await window.conveyor.app.version()) // OR
-  }
-
-  return (
-    <div>
-      <button onClick={handleGetVersion}>Get Version</button>
-      <button onClick={windowMinimize}>Minimize Window</button>
-    </div>
-  )
-}
-```
-
-### Available APIs
-
-Conveyor provides two ways to access IPC methods:
-
-```tsx
-// Method 1: React Hook (Recommended)
-const { version } = useConveyor('app')
-await version()
-
-// Method 2: React Hook Global Conveyor
-const conveyor = useConveyor()
-await conveyor.app.version()
-
-// Method 3: Global Window Object
-await window.conveyor.app.version()
-```
-
-### Built-in APIs
-
-| API      | Description                | Example                            |
-| -------- | -------------------------- | ---------------------------------- |
-| `app`    | App specfiic operations    | `conveyor.app.version()`           |
-| `window` | Window specific operations | `conveyor.window.windowMinimize()` |
-
-<br />
-
-### Creating Custom APIs
-
-Follow these 4 simple steps to add your own IPC methods:
-
-#### Step 1: Define Schema
-
-Create a schema in `lib/conveyor/schemas/app-schema.ts`:
-
-```ts
-import { z } from 'zod'
-
-export const appIpcSchema = {
-  // Simple method with no parameters
-  'get-app-info': {
-    args: z.tuple([]),
-    return: z.object({
-      name: z.string(),
-      version: z.string(),
-      platform: z.string(),
-    }),
-  },
-
-  // Method with parameters
-  'save-user-preference': {
-    args: z.tuple([
-      z.object({
-        key: z.string(),
-        value: z.string(),
-      }),
-    ]),
-    return: z.boolean(),
-  },
-} as const
-```
-
-#### Step 2: Add API Method
-
-Update `lib/conveyor/api/app-api.ts`:
-
-```ts
-export class AppApi extends ConveyorApi {
-  getAppInfo = () => this.invoke('get-app-info')
-  saveUserPreference = (key: string, value: string) => this.invoke('save-user-preference', { key, value })
-}
-```
-
-#### Step 3: Implement Handler
-
-Add handler in `lib/conveyor/handlers/app-handler.ts`:
-
-```ts
-import { handle } from '@/lib/main/shared'
-import { app } from 'electron'
-
-export const registerAppHandlers = () => {
-  handle('get-app-info', () => ({
-    name: app.getName(),
-    version: app.getVersion(),
-    platform: process.platform,
-  }))
-
-  handle('save-user-preference', async ({ key, value }) => {
-    // Save to file, database, etc.
-    console.log(`Saving ${key}: ${value}`)
-    return true
-  })
-}
-```
-
-#### Step 4: Register Handler
-
-In `lib/main/app.ts`:
-
-```ts
-import { registerAppHandlers } from '@/lib/conveyor/handlers/app-handler'
-
-// During app initialization
-registerAppHandlers()
-```
-
-### Usage in Components
-
-```tsx
-function SettingsComponent() {
-  const conveyor = useConveyor()
-  const [appInfo, setAppInfo] = useState(null)
-
-  useEffect(() => {
-    // Get app information
-    conveyor.app.getAppInfo().then(setAppInfo)
-  }, [])
-
-  const saveTheme = (theme: string) => {
-    conveyor.app.saveUserPreference('theme', theme)
-  }
-
-  return (
-    <div>
-      <h2>App Info</h2>
-      {appInfo && (
-        <p>
-          {appInfo.name} v{appInfo.version} on {appInfo.platform}
-        </p>
-      )}
-
-      <button onClick={() => saveTheme('dark')}>Set Dark Theme</button>
-    </div>
-  )
-}
-```
-
-### Error Handling
-
-```tsx
-const handleApiCall = async () => {
-  try {
-    const result = await conveyor.app.getAppInfo()
-    console.log('Success:', result)
-  } catch (error) {
-    console.error('API call failed:', error)
-    // Handle validation errors, network issues, etc.
-  }
-}
-```
-
-### Type Safety Benefits
-
-```tsx
-// ✅ TypeScript enforces correct types
-const info = await conveyor.app.getAppInfo() // Returns { name: string, version: string, platform: string }
-
-// ❌ TypeScript error - wrong parameter type
-const result = await conveyor.app.saveUserPreference(123, 'value') // Error: Expected string, got number
-
-// ✅ Runtime validation ensures data integrity
-const valid = await conveyor.app.saveUserPreference('theme', 'dark') // Validates at runtime
-```
-
-📖 **For advanced usage and detailed documentation, see [Conveyor README](lib/conveyor/README.md)**
-
-<br />
-
-## Custom Window Components
-
-This template includes a custom window implementation with:
-
-- Custom titlebar with app icon
-- Window control buttons (minimize, maximize, close)
-- Menu system with keyboard shortcuts
-- Dark/light mode toggle
-- Cross-platform support for Windows and macOS
-
-<br />
-
-### Titlebar Menu Toggle
-
-The titlebar menu can be toggled using:
-
-- **Windows**: Press the `Alt` key
-- **macOS**: Press the `Option (⌥)` key
-
-When you press the toggle key:
-
-- If the menu is hidden, it becomes visible
-- If the menu is already visible, it gets hidden
-- The menu only toggles if menu items are available
-
-<br />
-
-### Customizing Menu Items
-
-To add, remove or modify menu items, update the following file:
-
-- `app/components/window/menus.ts`
-
-<br />
-
-## Tailwind CSS
-
-The project supports **Tailwind** for styling:
-
-```ts
-// Example component with Tailwind classes
-const Button = () => (
-  <button className="px-4 py-2 text-white rounded-md">
-    Click me
-  </button>
-);
-```
-
-<br />
-
-## Key Directories Explained
-
-#### `app/` - Renderer Process
-
-- **React application** that runs in the browser window
-- Contains all UI components, styles, and client-side logic
-- Uses Vite for fast development and building
-
-#### `lib/conveyor/` - Conveyor - Inter-Process Communication
-
-- **Type-safe communication** between renderer and main processes
-- **API classes** provide clean interfaces for IPC calls
-- **Handlers** implement the actual logic in the main process
-- **Schemas** define data contracts with Zod validation
-
-#### `lib/main/` - Main Process
-
-- **Electron main process** code
-- Handles window creation, app lifecycle, and system integration
-- Registers IPC handlers and manages app state
-
-#### `lib/preload/` - Preload Scripts
-
-- **Security bridge** between renderer and main processes
-- Exposes safe APIs to the renderer process
-- Implements context isolation for security
-
-<br />
-
-## Development Workflow
-
-1. **UI Development**: Work in `app/` directory with React components
-2. **IPC Communication**: Define schemas, add API methods, implement handlers
-3. **Window Features**: Customize window behavior in `app/components/window/`
-4. **Prettier Formatting**: Use `npm run format` to format the code.
-5. **ESLint**: Use `npm run lint` to lint the code.
-
-<br />
-
-## Path Aliases
-
-The project uses TypeScript path aliases for clean imports:
-
-```ts
-// Instead of relative paths like:
-import { Button } from '../../../components/ui/button'
-
-// Use clean aliases:
-import { Button } from '@/app/components/ui/button'
-import { conveyor } from '@/lib/conveyor/api'
-```
-
-Configured aliases by default, customise as you want:
-
-- `@/` → `app/` (application code - renderer process)
-- `@/lib/` → `lib/` (shared library code containing conveyor, main, preload, etc.)
-- `@/resources/` → `resources/` (build resources for the application)
-
-<br />
+Claude Code plan usage needs no key at all — it reads the OAuth token Claude Code already stores locally once you're logged in via `claude` (Keychain on macOS, `~/.claude/.credentials.json` on other platforms).
 
 ## Building for Production
 
-Build the application for your platform:
-
 ```bash
-# For Windows
-npm run build:win
-
-# For macOS
-npm run build:mac
-
-# For Linux
-npm run build:linux
-
-# Unpacked for all platforms
-npm run build:unpack
+npm run build:mac      # macOS
+npm run build:win      # Windows
+npm run build:linux    # Linux
 ```
 
-Distribution files will be located in the `dist` directory.
+Distribution files are written to `dist/`.
+
+## Tech Stack
+
+Built with [Electron](https://www.electronjs.org), [React](https://react.dev), [TypeScript](https://www.typescriptlang.org), and [Vite](https://electron-vite.org), using a type-safe IPC layer ("Conveyor") validated with [Zod](https://zod.dev). Scaffolded from [guasam/electron-react-app](https://github.com/guasam/electron-react-app).
+
+## License
+
+[MIT](LICENSE)

@@ -1,12 +1,12 @@
 {
-  "name": "era",
-  "version": "12.1.0",
-  "description": "A modern Electron application starter kit with React, Vite, TypeScript, Shadcn UI and TailwindCSS",
+  "name": "ai-provider-spent",
+  "version": "0.1.0",
+  "description": "A macOS menu-bar app for tracking AI provider spend and Claude Code plan usage",
   "main": "./out/main/main.js",
   "license": "MIT",
   "author": {
-    "name": "Guasam",
-    "url": "https://github.com/guasam"
+    "name": "Kevin Hu",
+    "url": "https://github.com/justanotherkevin"
   },
   "scripts": {
     "dev": "cross-env ELECTRON_DISABLE_SANDBOX=1 electron-vite dev -w",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/guasam/electron-react-app"
+    "url": "https://github.com/justanotherkevin/ai-provider-spent"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
