@@ -4,6 +4,18 @@ All notable changes to the electron-react-app (ERA) are listed here.
 
 <br>
 
+## Unreleased
+
+- ✨ Added Claude Code plan usage tracking to the popover
+  - Shows exact 5-hour session %, weekly (all-models and per-model scoped, e.g. Fable) %, reset countdowns, and usage-credit spend
+  - Sourced from Anthropic's OAuth usage endpoint (`api.anthropic.com/api/oauth/usage`), authenticated with Claude Code's own locally stored login token — Keychain on macOS, `~/.claude/.credentials.json` elsewhere
+  - No API key or extra login required; new card degrades gracefully with a "Log in to Claude Code" message if no local token is found
+- 🖱️ Made the popover's middle content scrollable so new cards no longer get clipped by the fixed window height
+- 📏 Increased default popover height from 420px to 480px
+- 📝 Added `CLAUDE.md` documenting the project's architecture and the two spend data sources (local-only, not committed — see global gitignore)
+
+<br>
+
 ## v12.1.0
 
 - 🎉 Electron version upgraded to `v40.1.0`
