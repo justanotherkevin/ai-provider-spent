@@ -45,13 +45,13 @@ Tired of that "unidentified developer" warning? Same. It's a $99/year Apple Deve
 
 ## Features
 
-| Feature | Description |
-| --- | --- |
-| **Multi-provider spend** | Today / 7 Days / Month views across Anthropic, OpenAI, and (soon) Google Gemini |
-| **Claude Code plan usage** | Real session %, weekly %, per-model limits, and usage-credit spend — not an estimate |
-| **Menu bar tray title** | Shows your month-to-date total at a glance, no need to open the popover |
-| **Encrypted key storage** | Admin API keys are encrypted at rest via the macOS Keychain (Electron `safeStorage`) |
-| **Zero-config Claude Code usage** | If Claude Code is already logged in on your machine, usage tracking just works |
+| Feature                           | Description                                                                          |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| **Multi-provider spend**          | Today / 7 Days / Month views across Anthropic, OpenAI, and (soon) Google Gemini      |
+| **Claude Code plan usage**        | Real session %, weekly %, per-model limits, and usage-credit spend — not an estimate |
+| **Menu bar tray title**           | Shows your month-to-date total at a glance, no need to open the popover              |
+| **Encrypted key storage**         | Admin API keys are encrypted at rest via the macOS Keychain (Electron `safeStorage`) |
+| **Zero-config Claude Code usage** | If Claude Code is already logged in on your machine, usage tracking just works       |
 
 ## Run From Source
 
@@ -75,11 +75,11 @@ The app appears as an icon in your menu bar — click it to open the popover.
 
 Open **Settings** (gear icon in the popover) to add your provider Admin API keys:
 
-| Provider | Where to get a key |
-| --- | --- |
-| Anthropic | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) — requires an organization Admin key, not a regular API key |
-| OpenAI | [platform.openai.com](https://platform.openai.com) — organization Admin key |
-| Google Gemini | Not yet supported — requires a Cloud Billing BigQuery export |
+| Provider      | Where to get a key                                                                                                                                         |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic     | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) — requires an organization Admin key, not a regular API key |
+| OpenAI        | [platform.openai.com](https://platform.openai.com) — organization Admin key                                                                                |
+| Google Gemini | Not yet supported — requires a Cloud Billing BigQuery export                                                                                               |
 
 Claude Code plan usage needs no key at all — it reads the OAuth token Claude Code already stores locally once you're logged in via `claude` (Keychain on macOS, `~/.claude/.credentials.json` on other platforms).
 
@@ -100,3 +100,5 @@ Built with [Electron](https://www.electronjs.org), [React](https://react.dev), [
 ## License
 
 [MIT](LICENSE)
+
+test
