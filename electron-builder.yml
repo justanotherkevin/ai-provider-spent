@@ -20,6 +20,9 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  # ad hoc signing, replace with a Developer ID name once a paid cert exists
+  identity: '-'
+  entitlements: resources/build/entitlements.mac.plist
   entitlementsInherit: resources/build/entitlements.mac.plist
   category: public.app-category.utilities
   notarize: false
