@@ -33,7 +33,7 @@ Grab the latest build from the [Releases page](https://github.com/justanotherkev
 - **Apple Silicon** (M1/M2/M3/M4) — `ai-provider-spent-*-arm64.dmg`
 - **Intel** — `ai-provider-spent-*-x64.dmg`
 
-> **Heads up:** these builds are unsigned. macOS will say the app "can't be opened because it is from an unidentified developer." Right-click (or Control-click) the app in your Applications folder → **Open** → confirm. You only need to do this once.
+> **Heads up:** these builds aren't signed with an Apple Developer ID or notarized by Apple. macOS will say the app "can't be opened because it is from an unidentified developer." Right-click (or Control-click) the app in your Applications folder → **Open** → confirm. You only need to do this once.
 
 ## Support This Project
 
