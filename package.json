@@ -1,6 +1,6 @@
 {
   "name": "ai-provider-spent",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A macOS menu-bar app for tracking AI provider spend and Claude Code plan usage",
   "main": "./out/main/main.js",
   "license": "MIT",
