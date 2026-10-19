@@ -1,33 +1,36 @@
-import { execFileSync } from 'child_process'
+import { execFile, execFileSync } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
+import { promisify } from 'util'
 
 const USAGE_API_URL = 'https://api.anthropic.com/api/oauth/usage'
 const FALLBACK_CLAUDE_VERSION = '2.1.204'
 
-let cachedUserAgent: string | undefined
+const execFileAsync = promisify(execFile)
+
+let cachedUserAgent: Promise<string> | undefined
 
 // The usage endpoint is undocumented and expects a Claude Code user agent.
-function claudeCodeUserAgent(): string {
-  if (cachedUserAgent) return cachedUserAgent
-  let version = FALLBACK_CLAUDE_VERSION
-  try {
-    // Finder-launched apps get a minimal PATH, so add the usual install locations
-    const extra = [join(homedir(), '.local/bin'), '/opt/homebrew/bin', '/usr/local/bin']
-    const PATH = [...extra, process.env.PATH].filter(Boolean).join(':')
-    const out = execFileSync('claude', ['--version'], {
-      encoding: 'utf8',
-      timeout: 3000,
-      stdio: ['ignore', 'pipe', 'ignore'],
-      env: { ...process.env, PATH },
-    })
-    const match = out.match(/^\s*(\d+\.\d+\.\d+)/)
-    if (match) version = match[1]
-  } catch {
-    // keep fallback
-  }
-  cachedUserAgent = `claude-code/${version}`
+const claudeCodeUserAgent = (): Promise<string> => {
+  cachedUserAgent ??= (async () => {
+    let version = FALLBACK_CLAUDE_VERSION
+    try {
+      // Finder-launched apps get a minimal PATH, so add the usual install locations
+      const extra = [join(homedir(), '.local/bin'), '/opt/homebrew/bin', '/usr/local/bin']
+      const PATH = [...extra, process.env.PATH].filter(Boolean).join(':')
+      const { stdout } = await execFileAsync('claude', ['--version'], {
+        encoding: 'utf8',
+        timeout: 3000,
+        env: { ...process.env, PATH },
+      })
+      const match = stdout.match(/^\s*(\d+\.\d+\.\d+)/)
+      if (match) version = match[1]
+    } catch {
+      // keep fallback
+    }
+    return `claude-code/${version}`
+  })()
   return cachedUserAgent
 }
 
@@ -147,11 +150,12 @@ export const refreshClaudeUsage = async (): Promise<ClaudeUsageSnapshot> => {
   }
 
   try {
+    const userAgent = await claudeCodeUserAgent()
     const res = await fetch(USAGE_API_URL, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'User-Agent': claudeCodeUserAgent(),
+        'User-Agent': userAgent,
         'anthropic-beta': 'oauth-2025-04-20',
       },
     })
