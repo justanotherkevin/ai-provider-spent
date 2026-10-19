@@ -2,7 +2,7 @@
 
 [English](README.md) | [简体中文](README.cn.md)
 
-<p align="center"><em>A tiny macOS menu-bar app that keeps your AI spend and Claude Code plan usage one click away.</em></p>
+<p align="center"><em>A macOS menu-bar app that keeps your AI spend and Claude Code plan usage one click away.</em></p>
 
 <p align="center">
   <img src="docs/ai-provider-usage.gif" alt="AI Provider Spend demo" width="680">
@@ -100,5 +100,3 @@ Built with [Electron](https://www.electronjs.org), [React](https://react.dev), [
 ## License
 
 [MIT](LICENSE)
-
-test

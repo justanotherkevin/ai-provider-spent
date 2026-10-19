@@ -10,7 +10,7 @@ import { startSpendScheduler, monthToDateTotal } from './spend'
 import { startClaudeUsageScheduler } from './claude-code-usage'
 
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.desktop-ai-spent')
+  electronApp.setAppUserModelId('com.kevinhu.ai-provider-spent')
 
   // Menu bar app: no dock icon, but keep an Edit menu so Cmd+V works in inputs
   app.dock?.hide()

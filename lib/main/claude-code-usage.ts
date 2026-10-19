@@ -4,7 +4,32 @@ import { homedir } from 'os'
 import { join } from 'path'
 
 const USAGE_API_URL = 'https://api.anthropic.com/api/oauth/usage'
-const USER_AGENT = 'claude-code/2.1.204'
+const FALLBACK_CLAUDE_VERSION = '2.1.204'
+
+let cachedUserAgent: string | undefined
+
+// The usage endpoint is undocumented and expects a Claude Code user agent.
+function claudeCodeUserAgent(): string {
+  if (cachedUserAgent) return cachedUserAgent
+  let version = FALLBACK_CLAUDE_VERSION
+  try {
+    // Finder-launched apps get a minimal PATH, so add the usual install locations
+    const extra = [join(homedir(), '.local/bin'), '/opt/homebrew/bin', '/usr/local/bin']
+    const PATH = [...extra, process.env.PATH].filter(Boolean).join(':')
+    const out = execFileSync('claude', ['--version'], {
+      encoding: 'utf8',
+      timeout: 3000,
+      stdio: ['ignore', 'pipe', 'ignore'],
+      env: { ...process.env, PATH },
+    })
+    const match = out.match(/^\s*(\d+\.\d+\.\d+)/)
+    if (match) version = match[1]
+  } catch {
+    // keep fallback
+  }
+  cachedUserAgent = `claude-code/${version}`
+  return cachedUserAgent
+}
 
 export interface ClaudeUsageLimit {
   kind: string
@@ -126,7 +151,7 @@ export const refreshClaudeUsage = async (): Promise<ClaudeUsageSnapshot> => {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'User-Agent': USER_AGENT,
+        'User-Agent': claudeCodeUserAgent(),
         'anthropic-beta': 'oauth-2025-04-20',
       },
     })
