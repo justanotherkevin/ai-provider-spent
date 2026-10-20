@@ -12,6 +12,7 @@ export default [
       'out/**',
       '.vscode/**',
       '.git/**',
+      '.claude/worktrees/**',
       '.gitignore',
       '.eslintignore',
       '.eslintrc',

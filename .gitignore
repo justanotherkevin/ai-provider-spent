@@ -5,3 +5,6 @@ out
 *.log*
 temp
 *.tsbuildinfo
+.env
+.env.*
+.claude/worktrees/
