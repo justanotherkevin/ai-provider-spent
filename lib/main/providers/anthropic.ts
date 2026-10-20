@@ -1,4 +1,4 @@
-import { utcDayStart, type ProviderResult, type DailyCost } from './types'
+import { utcDayStart, type ApiKeyProvider, type ProviderResult, type DailyCost } from './types'
 
 interface CostBucket {
   starting_at: string
@@ -15,7 +15,7 @@ interface CostReportPage {
  * Anthropic Admin API cost report, daily buckets for the last 31 days.
  * https://platform.claude.com/docs/en/manage-claude/usage-cost-api
  */
-export async function fetchAnthropicCosts(adminKey: string): Promise<ProviderResult> {
+async function fetchAnthropicCosts(adminKey: string): Promise<ProviderResult> {
   const startingAt = utcDayStart(30).toISOString()
   const base = `https://api.anthropic.com/v1/organizations/cost_report?starting_at=${encodeURIComponent(startingAt)}&bucket_width=1d&limit=31`
 
@@ -48,4 +48,12 @@ export async function fetchAnthropicCosts(adminKey: string): Promise<ProviderRes
   } catch (error) {
     return { status: 'error', message: error instanceof Error ? error.message : 'Network error', dailyCosts: [] }
   }
+}
+
+export const anthropic: ApiKeyProvider = {
+  id: 'anthropic',
+  name: 'Anthropic',
+  access: 'api-key',
+  keyLabel: 'Admin API key',
+  fetchSpend: fetchAnthropicCosts,
 }

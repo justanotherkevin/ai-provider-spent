@@ -2,8 +2,15 @@ import { z } from 'zod'
 
 export const providerIdSchema = z.enum(['anthropic', 'openai', 'google'])
 
+export type ProviderId = z.infer<typeof providerIdSchema>
+
+export const providerAccessSchema = z.enum(['api-key', 'unavailable'])
+
 export const providerSpendSchema = z.object({
   provider: providerIdSchema,
+  name: z.string(),
+  access: providerAccessSchema,
+  keyLabel: z.string().optional(),
   status: z.enum(['ok', 'no-key', 'unavailable', 'error']),
   message: z.string().optional(),
   dailyCosts: z.array(z.object({ date: z.string(), amount: z.number() })),
@@ -14,11 +21,7 @@ export const spendSnapshotSchema = z.object({
   updatedAt: z.number().nullable(),
 })
 
-export const keyStatusSchema = z.object({
-  anthropic: z.boolean(),
-  openai: z.boolean(),
-  google: z.boolean(),
-})
+export const keyStatusSchema = z.partialRecord(providerIdSchema, z.boolean())
 
 export type SpendSnapshot = z.infer<typeof spendSnapshotSchema>
 export type ProviderSpend = z.infer<typeof providerSpendSchema>

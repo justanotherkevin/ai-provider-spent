@@ -99,9 +99,9 @@ interface RawUsageResponse {
   limits?: RawLimitEntry[]
   extra_usage?: {
     is_enabled: boolean
-    monthly_limit: number
-    used_credits: number
-    utilization: number
+    monthly_limit: number | null
+    used_credits: number | null
+    utilization: number | null
   }
 }
 
@@ -111,7 +111,9 @@ const labelForLimit = (entry: RawLimitEntry): string => {
   return entry.scope?.model?.display_name ?? 'Weekly'
 }
 
-const parseUsageResponse = (body: RawUsageResponse): { limits: ClaudeUsageLimit[]; credits: ClaudeUsageCredits | null } => {
+const parseUsageResponse = (
+  body: RawUsageResponse
+): { limits: ClaudeUsageLimit[]; credits: ClaudeUsageCredits | null } => {
   const limits: ClaudeUsageLimit[] = (body.limits ?? []).map((entry) => ({
     kind: entry.kind,
     label: labelForLimit(entry),
@@ -121,12 +123,12 @@ const parseUsageResponse = (body: RawUsageResponse): { limits: ClaudeUsageLimit[
   }))
 
   const extraUsage = body.extra_usage
-  const credits: ClaudeUsageCredits | null = extraUsage
+  const credits: ClaudeUsageCredits | null = extraUsage?.is_enabled
     ? {
-        enabled: extraUsage.is_enabled,
-        usedDollars: extraUsage.used_credits,
-        limitDollars: extraUsage.monthly_limit / 100, // monthly_limit is in cents
-        percent: extraUsage.utilization,
+        enabled: true,
+        usedDollars: extraUsage.used_credits ?? 0,
+        limitDollars: (extraUsage.monthly_limit ?? 0) / 100, // monthly_limit is in cents
+        percent: extraUsage.utilization ?? 0,
       }
     : null
 
@@ -161,11 +163,21 @@ export const refreshClaudeUsage = async (): Promise<ClaudeUsageSnapshot> => {
     })
 
     if (res.status === 401) {
-      snapshot = { status: 'no-token', message: 'Claude Code session expired — log in again', limits: [], updatedAt: Date.now() }
+      snapshot = {
+        status: 'no-token',
+        message: 'Claude Code session expired — log in again',
+        limits: [],
+        updatedAt: Date.now(),
+      }
       return snapshot
     }
     if (!res.ok) {
-      snapshot = { status: 'error', message: `Anthropic usage API error ${res.status}`, limits: [], updatedAt: Date.now() }
+      snapshot = {
+        status: 'error',
+        message: `Anthropic usage API error ${res.status}`,
+        limits: [],
+        updatedAt: Date.now(),
+      }
       return snapshot
     }
 
