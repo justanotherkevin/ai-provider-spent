@@ -2,6 +2,20 @@
 
 All notable changes to AI Provider Spend are listed here.
 
+## [Unreleased]
+
+### Added
+
+- DeepSeek spend, read from the DeepSeek dashboard with a dashboard token that you paste in Settings.
+
+### Changed
+
+- Each provider is now one module that declares how the app gets its spend data, so adding a provider takes one new file, one entry in the provider list, and one value in the provider id enum.
+
+### Fixed
+
+- The Claude Code usage card no longer fails when the usage response has no extra usage credits.
+
 ## [0.1.1] - 2026-10-19
 
 ### Fixed

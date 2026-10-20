@@ -22,7 +22,7 @@ Are you like me — constantly alt-tabbing over to claude.ai just to check how m
 AI Provider Spend lives in your macOS menu bar and answers two questions you'd otherwise have to open three different dashboards for:
 
 - **"How much of my Claude Code plan have I used?"** — one click away instead of a browser tab. Shows the exact same 5-hour session %, weekly %, per-model scoped limits (e.g. a specific model's weekly cap), and reset countdowns that claude.ai's own Settings → Usage page shows, sourced straight from Anthropic's usage endpoint using Claude Code's own local login — no extra setup required.
-- **"How much have I spent on AI APIs this month?"** — pulls official billing data from each provider's Admin API (Anthropic, OpenAI; Google Gemini support is pending Cloud Billing export).
+- **"How much have I spent on AI APIs this month?"** — pulls billing data from each provider's Admin API (Anthropic, OpenAI) or dashboard (DeepSeek); Google Gemini support is pending Cloud Billing export.
 
 Everything renders in a lightweight popover anchored to the tray icon. No dock icon, no full app window, no accounts to create — just the numbers, right where you already are.
 
@@ -45,13 +45,13 @@ Tired of that "unidentified developer" warning? Same. It's a $99/year Apple Deve
 
 ## Features
 
-| Feature                           | Description                                                                          |
-| --------------------------------- | ------------------------------------------------------------------------------------ |
-| **Multi-provider spend**          | Today / 7 Days / Month views across Anthropic, OpenAI, and (soon) Google Gemini      |
-| **Claude Code plan usage**        | Real session %, weekly %, per-model limits, and usage-credit spend — not an estimate |
-| **Menu bar tray title**           | Shows your month-to-date total at a glance, no need to open the popover              |
-| **Encrypted key storage**         | Admin API keys are encrypted at rest via the macOS Keychain (Electron `safeStorage`) |
-| **Zero-config Claude Code usage** | If Claude Code is already logged in on your machine, usage tracking just works       |
+| Feature                           | Description                                                                                               |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Multi-provider spend**          | Today / 7 Days / Month views across Anthropic, OpenAI, DeepSeek, and (soon) Google Gemini                 |
+| **Claude Code plan usage**        | Real session %, weekly %, per-model limits, and usage-credit spend — not an estimate                      |
+| **Menu bar tray title**           | Shows your month-to-date total at a glance, no need to open the popover                                   |
+| **Encrypted key storage**         | Admin API keys and dashboard tokens are encrypted at rest via the macOS Keychain (Electron `safeStorage`) |
+| **Zero-config Claude Code usage** | If Claude Code is already logged in on your machine, usage tracking just works                            |
 
 ## Run From Source
 
@@ -75,11 +75,14 @@ The app appears as an icon in your menu bar — click it to open the popover.
 
 Open **Settings** (gear icon in the popover) to add your provider Admin API keys:
 
-| Provider      | Where to get a key                                                                                                                                         |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Anthropic     | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) — requires an organization Admin key, not a regular API key |
-| OpenAI        | [platform.openai.com](https://platform.openai.com) — organization Admin key                                                                                |
-| Google Gemini | Not yet supported — requires a Cloud Billing BigQuery export                                                                                               |
+| Provider      | Where to get a key                                                                                                                                                                                                                                        |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Anthropic     | [console.anthropic.com/settings/admin-keys](https://console.anthropic.com/settings/admin-keys) — requires an organization Admin key, not a regular API key                                                                                                |
+| OpenAI        | [platform.openai.com](https://platform.openai.com) — organization Admin key                                                                                                                                                                               |
+| DeepSeek      | Your dashboard token. Sign in at [platform.deepseek.com](https://platform.deepseek.com), open the DevTools console, run `copy(JSON.parse(localStorage.userToken).value)`, and paste the result. The token may expire, and the app will ask for a new one. |
+| Google Gemini | Not yet supported — requires a Cloud Billing BigQuery export                                                                                                                                                                                              |
+
+DeepSeek has no official spend API, so the app reads daily cost from the same internal endpoint that the DeepSeek usage page uses, with your dashboard token. DeepSeek can change that endpoint without notice, and the token can expire, so the DeepSeek row may show an error until you paste a new token or update the app. Days are counted in UTC, so daily numbers can differ slightly from the dashboard, which uses your local time zone.
 
 Claude Code plan usage needs no key at all — it reads the OAuth token Claude Code already stores locally once you're logged in via `claude` (Keychain on macOS, `~/.claude/.credentials.json` on other platforms).
 

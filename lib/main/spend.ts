@@ -7,6 +7,7 @@ export interface ProviderSpend extends ProviderResult {
   name: string
   access: Provider['access']
   keyLabel?: string // set only for api-key providers
+  keyHelp?: string
 }
 
 export interface SpendSnapshot {
@@ -39,7 +40,7 @@ export async function refreshSpend(): Promise<SpendSnapshot> {
         provider: p.id,
         name: p.name,
         access: p.access,
-        ...(p.access === 'api-key' && { keyLabel: p.keyLabel }),
+        ...(p.access === 'api-key' && { keyLabel: p.keyLabel, keyHelp: p.keyHelp }),
         ...(await fetchProviderSpend(p)),
       })
     )
