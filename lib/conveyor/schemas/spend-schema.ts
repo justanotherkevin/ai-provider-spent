@@ -5,6 +5,7 @@ export const providerIdSchema = z.enum(['anthropic', 'openai', 'deepseek', 'goog
 export type ProviderId = z.infer<typeof providerIdSchema>
 
 export const providerAccessSchema = z.enum(['api-key', 'unavailable'])
+export type ProviderAccess = z.infer<typeof providerAccessSchema>
 
 export const providerSpendSchema = z.object({
   provider: providerIdSchema,

@@ -27,7 +27,7 @@ const responseSchema = z.object({
 const fail = (message: string): ProviderResult => ({ status: 'error', message, dailyCosts: [] })
 
 /** Accepts the raw token, a quoted string, or the whole localStorage.userToken JSON, and returns the bare token. */
-function normalizeToken(input: string): string {
+export const normalizeToken = (input: string): string => {
   const text = input.trim()
   try {
     if (text.startsWith('{')) {
@@ -43,6 +43,40 @@ function normalizeToken(input: string): string {
   return text
 }
 
+/** Turns a dashboard cost response into daily USD spend. Never throws. */
+export const parseDeepSeekCosts = (body: unknown): ProviderResult => {
+  const parsed = responseSchema.safeParse(body)
+  if (!parsed.success) return fail('Unexpected DeepSeek dashboard response')
+  const { code, data } = parsed.data
+
+  if (code === 40003) return fail('DeepSeek token expired, paste a new one in Settings')
+  const errorCode = code !== 0 ? code : (data?.biz_code ?? 0)
+  if (errorCode !== 0) return fail(`DeepSeek dashboard error code ${errorCode}`)
+
+  const entries = data?.biz_data?.data
+  if (!entries) return fail('Unexpected DeepSeek dashboard response')
+
+  const usd = entries.filter((e) => e.currency === 'USD')
+  if (entries.length > 0 && usd.length === 0) return fail('Only USD billing is supported')
+
+  const byDate = new Map<string, number>()
+  for (const entry of usd) {
+    for (const series of [...entry.series, ...(entry.function_series ?? [])]) {
+      for (const bucket of series.buckets) {
+        const cost = typeof bucket.cost === 'string' || typeof bucket.cost === 'number' ? Number(bucket.cost) : NaN
+        if (!Number.isFinite(cost) || !Number.isFinite(bucket.time)) continue
+        const date = new Date(bucket.time * 1000).toISOString().slice(0, 10)
+        byDate.set(date, (byDate.get(date) ?? 0) + cost)
+      }
+    }
+  }
+
+  const dailyCosts: DailyCost[] = [...byDate]
+    .map(([date, amount]) => ({ date, amount }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+  return { status: 'ok', dailyCosts }
+}
+
 /**
  * DeepSeek dashboard cost endpoint, daily buckets for the last 31 days.
  * Undocumented internal API behind platform.deepseek.com/usage, authenticated with the dashboard token.
@@ -55,37 +89,7 @@ async function fetchDeepSeekCosts(token: string): Promise<ProviderResult> {
   try {
     const res = await fetch(url, { headers: { Authorization: `Bearer ${normalizeToken(token)}` } })
     if (!res.ok) return fail(`DeepSeek dashboard error ${res.status}`)
-
-    const parsed = responseSchema.safeParse(await res.json())
-    if (!parsed.success) return fail('Unexpected DeepSeek dashboard response')
-    const { code, data } = parsed.data
-
-    if (code === 40003) return fail('DeepSeek token expired, paste a new one in Settings')
-    const errorCode = code !== 0 ? code : (data?.biz_code ?? 0)
-    if (errorCode !== 0) return fail(`DeepSeek dashboard error code ${errorCode}`)
-
-    const entries = data?.biz_data?.data
-    if (!entries) return fail('Unexpected DeepSeek dashboard response')
-
-    const usd = entries.filter((e) => e.currency === 'USD')
-    if (entries.length > 0 && usd.length === 0) return fail('Only USD billing is supported')
-
-    const byDate = new Map<string, number>()
-    for (const entry of usd) {
-      for (const series of [...entry.series, ...(entry.function_series ?? [])]) {
-        for (const bucket of series.buckets) {
-          const cost = typeof bucket.cost === 'string' || typeof bucket.cost === 'number' ? Number(bucket.cost) : NaN
-          if (!Number.isFinite(cost) || !Number.isFinite(bucket.time)) continue
-          const date = new Date(bucket.time * 1000).toISOString().slice(0, 10)
-          byDate.set(date, (byDate.get(date) ?? 0) + cost)
-        }
-      }
-    }
-
-    const dailyCosts: DailyCost[] = [...byDate]
-      .map(([date, amount]) => ({ date, amount }))
-      .sort((a, b) => a.date.localeCompare(b.date))
-    return { status: 'ok', dailyCosts }
+    return parseDeepSeekCosts(await res.json())
   } catch (error) {
     return fail(error instanceof Error ? error.message : 'Network error')
   }

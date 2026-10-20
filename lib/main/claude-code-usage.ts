@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'fs'
 import { homedir } from 'os'
 import { join } from 'path'
 import { promisify } from 'util'
+import { z } from 'zod'
 
 const USAGE_API_URL = 'https://api.anthropic.com/api/oauth/usage'
 const FALLBACK_CLAUDE_VERSION = '2.1.204'
@@ -86,51 +87,68 @@ const readAccessToken = (): string | null => {
   }
 }
 
-interface RawLimitEntry {
-  kind: string
-  group: string
-  percent: number
-  resets_at: string | null
-  is_active: boolean
-  scope: { model?: { display_name?: string } } | null
-}
+const limitEntrySchema = z.object({
+  kind: z.string(),
+  percent: z.number(),
+  resets_at: z.string().nullable().catch(null),
+  is_active: z.boolean().catch(false),
+  scope: z
+    .object({
+      model: z
+        .object({ display_name: z.string().optional().catch(undefined) })
+        .nullish()
+        .catch(null),
+    })
+    .nullish()
+    .catch(null),
+})
 
-interface RawUsageResponse {
-  limits?: RawLimitEntry[]
-  extra_usage?: {
-    is_enabled: boolean
-    monthly_limit: number | null
-    used_credits: number | null
-    utilization: number | null
-  }
-}
+const extraUsageSchema = z.object({
+  is_enabled: z.boolean(),
+  monthly_limit: z.number().nullable(),
+  used_credits: z.number().nullable(),
+  utilization: z.number().nullable(),
+})
 
-const labelForLimit = (entry: RawLimitEntry): string => {
+type LimitEntry = z.infer<typeof limitEntrySchema>
+
+const labelForLimit = (entry: LimitEntry): string => {
   if (entry.kind === 'session') return 'Current session'
   if (entry.kind === 'weekly_all') return 'All models'
   return entry.scope?.model?.display_name ?? 'Weekly'
 }
 
-const parseUsageResponse = (
-  body: RawUsageResponse
-): { limits: ClaudeUsageLimit[]; credits: ClaudeUsageCredits | null } => {
-  const limits: ClaudeUsageLimit[] = (body.limits ?? []).map((entry) => ({
-    kind: entry.kind,
-    label: labelForLimit(entry),
-    percent: entry.percent,
-    resetsAt: entry.resets_at,
-    isActive: entry.is_active,
-  }))
+/** Turns the raw usage response into limits and credits, skipping anything malformed. Returns null if the body is not an object. */
+export const parseUsageResponse = (
+  body: unknown
+): { limits: ClaudeUsageLimit[]; credits: ClaudeUsageCredits | null } | null => {
+  if (typeof body !== 'object' || body === null || Array.isArray(body)) return null
+  const raw = body as { limits?: unknown; extra_usage?: unknown }
 
-  const extraUsage = body.extra_usage
-  const credits: ClaudeUsageCredits | null = extraUsage?.is_enabled
-    ? {
-        enabled: true,
-        usedDollars: extraUsage.used_credits ?? 0,
-        limitDollars: (extraUsage.monthly_limit ?? 0) / 100, // monthly_limit is in cents
-        percent: extraUsage.utilization ?? 0,
-      }
-    : null
+  const limits: ClaudeUsageLimit[] = []
+  for (const item of Array.isArray(raw.limits) ? raw.limits : []) {
+    const parsed = limitEntrySchema.safeParse(item)
+    if (!parsed.success) continue
+    const entry = parsed.data
+    limits.push({
+      kind: entry.kind,
+      label: labelForLimit(entry),
+      percent: entry.percent,
+      resetsAt: entry.resets_at,
+      isActive: entry.is_active,
+    })
+  }
+
+  const extra = extraUsageSchema.safeParse(raw.extra_usage)
+  const credits: ClaudeUsageCredits | null =
+    extra.success && extra.data.is_enabled
+      ? {
+          enabled: true,
+          usedDollars: extra.data.used_credits ?? 0,
+          limitDollars: (extra.data.monthly_limit ?? 0) / 100, // monthly_limit is in cents
+          percent: extra.data.utilization ?? 0,
+        }
+      : null
 
   return { limits, credits }
 }
@@ -181,9 +199,12 @@ export const refreshClaudeUsage = async (): Promise<ClaudeUsageSnapshot> => {
       return snapshot
     }
 
-    const body = (await res.json()) as RawUsageResponse
-    const { limits, credits } = parseUsageResponse(body)
-    snapshot = { status: 'ok', limits, credits, updatedAt: Date.now() }
+    const parsed = parseUsageResponse(await res.json())
+    if (!parsed) {
+      snapshot = { status: 'error', message: 'Unexpected Claude usage response', limits: [], updatedAt: Date.now() }
+      return snapshot
+    }
+    snapshot = { status: 'ok', limits: parsed.limits, credits: parsed.credits, updatedAt: Date.now() }
   } catch (error) {
     snapshot = {
       status: 'error',

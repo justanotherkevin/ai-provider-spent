@@ -1,4 +1,4 @@
-import type { ProviderId } from '@/lib/conveyor/schemas/spend-schema'
+import type { ProviderAccess, ProviderId } from '@/lib/conveyor/schemas/spend-schema'
 
 export interface DailyCost {
   /** UTC calendar day, YYYY-MM-DD */
@@ -27,7 +27,7 @@ interface ProviderBase {
 }
 
 export interface ApiKeyProvider extends ProviderBase {
-  access: 'api-key'
+  access: Extract<ProviderAccess, 'api-key'>
   /** Placeholder for the key input in Settings, e.g. 'Admin API key'. */
   keyLabel: string
   /** Shown under the key input in Settings, e.g. how to find the key. */
@@ -37,9 +37,10 @@ export interface ApiKeyProvider extends ProviderBase {
 }
 
 export interface UnavailableProvider extends ProviderBase {
-  access: 'unavailable'
+  access: Extract<ProviderAccess, 'unavailable'>
   /** Shown in the spend row and in Settings. */
   message: string
 }
 
+// Access values come from providerAccessSchema, so add a new path there first
 export type Provider = ApiKeyProvider | UnavailableProvider
