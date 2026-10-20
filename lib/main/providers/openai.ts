@@ -1,4 +1,4 @@
-import { utcDayStart, type ProviderResult, type DailyCost } from './types'
+import { utcDayStart, type ApiKeyProvider, type ProviderResult, type DailyCost } from './types'
 
 interface CostBucket {
   start_time: number
@@ -15,7 +15,7 @@ interface CostsPage {
  * OpenAI organization Costs API, daily buckets for the last 31 days.
  * https://developers.openai.com/api/reference — requires an Admin API key.
  */
-export async function fetchOpenAICosts(adminKey: string): Promise<ProviderResult> {
+async function fetchOpenAICosts(adminKey: string): Promise<ProviderResult> {
   const startTime = Math.floor(utcDayStart(30).getTime() / 1000)
   const base = `https://api.openai.com/v1/organization/costs?start_time=${startTime}&bucket_width=1d&limit=31`
 
@@ -45,4 +45,12 @@ export async function fetchOpenAICosts(adminKey: string): Promise<ProviderResult
   } catch (error) {
     return { status: 'error', message: error instanceof Error ? error.message : 'Network error', dailyCosts: [] }
   }
+}
+
+export const openai: ApiKeyProvider = {
+  id: 'openai',
+  name: 'OpenAI',
+  access: 'api-key',
+  keyLabel: 'Admin API key',
+  fetchSpend: fetchOpenAICosts,
 }

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Power, RefreshCw, Settings } from 'lucide-react'
 import { useConveyor } from '@/app/hooks/use-conveyor'
 import type { SpendSnapshot, ProviderSpend } from '@/lib/conveyor/schemas/spend-schema'
-import { PROVIDERS } from './providers'
 import { ClaudeUsageCard } from './ClaudeUsageCard'
 
 type Period = 'today' | '7d' | 'month'
@@ -37,11 +36,9 @@ const formatUpdatedAt = (timestamp: number) =>
   new Date(timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
 
 const ProviderRow = ({ spend, period }: { spend: ProviderSpend; period: Period }) => {
-  const meta = PROVIDERS.find((p) => p.id === spend.provider)
-
   return (
     <div className="provider-row">
-      <span className="provider-name">{meta?.name ?? spend.provider}</span>
+      <span className="provider-name">{spend.name}</span>
       {spend.status === 'ok' ? (
         <span className="provider-amount">{formatUsd(periodTotal(spend, period))}</span>
       ) : (

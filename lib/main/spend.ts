@@ -1,11 +1,12 @@
-import { getKey, type ProviderId } from './keystore'
-import { fetchAnthropicCosts } from './providers/anthropic'
-import { fetchOpenAICosts } from './providers/openai'
-import { fetchGoogleCosts } from './providers/google'
-import type { ProviderResult } from './providers/types'
+import type { ProviderId } from '@/lib/conveyor/schemas/spend-schema'
+import { PROVIDERS, fetchProviderSpend } from './providers'
+import type { Provider, ProviderResult } from './providers/types'
 
 export interface ProviderSpend extends ProviderResult {
   provider: ProviderId
+  name: string
+  access: Provider['access']
+  keyLabel?: string // set only for api-key providers
 }
 
 export interface SpendSnapshot {
@@ -32,26 +33,19 @@ export const monthToDateTotal = (snap: SpendSnapshot): number | null => {
 }
 
 export async function refreshSpend(): Promise<SpendSnapshot> {
-  const withKey = (provider: ProviderId, fetcher: (key: string) => Promise<ProviderResult>): Promise<ProviderResult> => {
-    const key = getKey(provider)
-    if (!key) return Promise.resolve({ status: 'no-key', dailyCosts: [] })
-    return fetcher(key)
-  }
+  const providers = await Promise.all(
+    PROVIDERS.map(
+      async (p): Promise<ProviderSpend> => ({
+        provider: p.id,
+        name: p.name,
+        access: p.access,
+        ...(p.access === 'api-key' && { keyLabel: p.keyLabel }),
+        ...(await fetchProviderSpend(p)),
+      })
+    )
+  )
 
-  const [anthropic, openai, google] = await Promise.all([
-    withKey('anthropic', fetchAnthropicCosts),
-    withKey('openai', fetchOpenAICosts),
-    fetchGoogleCosts(),
-  ])
-
-  snapshot = {
-    providers: [
-      { provider: 'anthropic', ...anthropic },
-      { provider: 'openai', ...openai },
-      { provider: 'google', ...google },
-    ],
-    updatedAt: Date.now(),
-  }
+  snapshot = { providers, updatedAt: Date.now() }
   onUpdate?.(snapshot)
   return snapshot
 }

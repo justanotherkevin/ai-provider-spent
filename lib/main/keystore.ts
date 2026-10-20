@@ -1,10 +1,7 @@
 import { app, safeStorage } from 'electron'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-
-export type ProviderId = 'anthropic' | 'openai' | 'google'
-
-export const PROVIDER_IDS: ProviderId[] = ['anthropic', 'openai', 'google']
+import type { ProviderId } from '@/lib/conveyor/schemas/spend-schema'
 
 const keysFile = () => join(app.getPath('userData'), 'keys.enc')
 
@@ -47,11 +44,4 @@ export const setKey = (provider: ProviderId, key: string): void => {
   writeStore(store)
 }
 
-export const getKeyStatus = (): Record<ProviderId, boolean> => {
-  const store = readStore()
-  return {
-    anthropic: Boolean(store.anthropic),
-    openai: Boolean(store.openai),
-    google: Boolean(store.google),
-  }
-}
+export const hasKey = (provider: ProviderId): boolean => Boolean(readStore()[provider])

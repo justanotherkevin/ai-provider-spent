@@ -1,7 +1,8 @@
 import { handle } from '@/lib/main/shared'
 import { getSnapshot, refreshSpend, monthToDateTotal } from '@/lib/main/spend'
 import { setTrayTitle } from '@/lib/main/tray'
-import { getKeyStatus, setKey } from '@/lib/main/keystore'
+import { setKey } from '@/lib/main/keystore'
+import { getKeyStatus } from '@/lib/main/providers'
 
 export const registerSpendHandlers = () => {
   handle('spend-snapshot', () => getSnapshot())
