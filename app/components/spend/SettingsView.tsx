@@ -27,30 +27,33 @@ const KeyRow = ({
       {spend.access === 'unavailable' ? (
         <span className="provider-note">{spend.message}</span>
       ) : (
-        <div className="key-row-controls">
-          <input
-            className="key-input"
-            type="password"
-            placeholder={configured ? '••••••••••••' : spend.keyLabel}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button
-            className="key-button"
-            disabled={!value}
-            onClick={async () => {
-              await onSave(value)
-              setValue('')
-            }}
-          >
-            Save
-          </button>
-          {configured && (
-            <button className="key-button key-button-clear" onClick={onClear}>
-              Clear
+        <>
+          <div className="key-row-controls">
+            <input
+              className="key-input"
+              type="password"
+              placeholder={configured ? '••••••••••••' : spend.keyLabel}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+            <button
+              className="key-button"
+              disabled={!value}
+              onClick={async () => {
+                await onSave(value)
+                setValue('')
+              }}
+            >
+              Save
             </button>
-          )}
-        </div>
+            {configured && (
+              <button className="key-button key-button-clear" onClick={onClear}>
+                Clear
+              </button>
+            )}
+          </div>
+          {spend.keyHelp && <span className="provider-note">{spend.keyHelp}</span>}
+        </>
       )}
     </div>
   )
@@ -84,8 +87,8 @@ export const SettingsView = ({ onBack }: { onBack: () => void }) => {
 
       <div className="settings-body">
         <p className="settings-hint">
-          Spend data comes from each provider's official billing API and needs an organization Admin API key. Keys are
-          encrypted on disk with a key held in the macOS Keychain.
+          Anthropic and OpenAI need an organization Admin API key. DeepSeek needs your dashboard token. Keys and tokens
+          are encrypted on disk with a key held in the macOS Keychain.
         </p>
         {snapshot && snapshot.providers.length > 0 ? (
           snapshot.providers.map((p) => (

@@ -2,10 +2,11 @@ import { getKey, hasKey } from '../keystore'
 import type { ProviderId } from '@/lib/conveyor/schemas/spend-schema'
 import { anthropic } from './anthropic'
 import { openai } from './openai'
+import { deepseek } from './deepseek'
 import { google } from './google'
 import type { Provider, ProviderResult } from './types'
 
-export const PROVIDERS: Provider[] = [anthropic, openai, google]
+export const PROVIDERS: Provider[] = [anthropic, openai, deepseek, google]
 
 /** Spend for one provider, following its declared access path. */
 export const fetchProviderSpend = (provider: Provider): Promise<ProviderResult> => {

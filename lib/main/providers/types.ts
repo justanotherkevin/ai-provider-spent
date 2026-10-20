@@ -30,6 +30,8 @@ export interface ApiKeyProvider extends ProviderBase {
   access: 'api-key'
   /** Placeholder for the key input in Settings, e.g. 'Admin API key'. */
   keyLabel: string
+  /** Shown under the key input in Settings, e.g. how to find the key. */
+  keyHelp?: string
   /** Last 31 days of spend. Never throws. */
   fetchSpend: (apiKey: string) => Promise<ProviderResult>
 }
